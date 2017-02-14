@@ -1,0 +1,7 @@
+syntax = "proto3";
+package cranberries;
+
+message ModelServerConfig {
+  string zookeeper_hosts = 1;
+  string zookeeper_base = 2;
+}

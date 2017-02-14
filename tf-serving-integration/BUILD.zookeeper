@@ -1,0 +1,32 @@
+cc_library(
+  name = "zookeeper_mt",
+  visibility = ["//visibility:public"],
+  srcs = glob([
+    "src/*.c",
+    "src/*.h",
+    "src/hashtable/*.c",
+    "src/hashtable/*.h",
+    "generated/*.c",
+  ], exclude=[
+    "src/cli.c",
+    "src/st_adaptor.c"
+  ]) + [":config_header"],
+  hdrs = glob(["include/*.h"]) + [":zookeeper_hdrs_generated"],
+  strip_include_prefix = "include",
+  copts = ["-Iexternal/zookeeper/src", "-Iexternal/zookeeper/generated", "-pthread", "-DTHREADED"],
+  linkopts = ["-pthread"]
+)
+genrule(
+  name = "zookeeper_hdrs_generated",
+  visibility = ["//visibility:private"],
+  srcs = glob(["generated/zookeeper.jute.h"]),
+  cmd = "cp $< $@",
+  outs = ["include/zookeeper.jute.h"],
+)
+genrule(
+  name = "config_header",
+  visibility = ["//visibility:private"],
+  srcs = ["configure", "install-sh", "missing", "config.sub", "config.guess", "Makefile.in", "config.h.in", "ltmain.sh", "src/zookeeper.c"] + glob(["generated/*.c", "generated/*.h"]),
+  cmd = "pushd $$(dirname $(location configure)) && ./configure && FROM=$$(realpath config.h) && popd && cp \"$$FROM\" \"$@\"",
+  outs = ["config.h"]
+)

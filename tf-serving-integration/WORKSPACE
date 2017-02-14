@@ -1,0 +1,22 @@
+new_http_archive(
+    name = "zookeeper",
+    url = "http://apache.mirror.cdnetworks.com/zookeeper/zookeeper-3.4.9/zookeeper-3.4.9.tar.gz",
+    sha256 = "e7f340412a61c7934b5143faef8d13529b29242ebfba2eba48169f4a8392f535",
+    strip_prefix = "zookeeper-3.4.9/src/c",
+    build_file = "BUILD.zookeeper",
+)
+
+local_repository(
+    name = "tf_serving",
+    path = "serving",
+)
+local_repository(
+    name = "org_tensorflow",
+    path = "serving/tensorflow",
+)
+
+load("@tf_serving//tensorflow_serving:workspace.bzl", "tf_serving_workspace")
+tf_serving_workspace()
+
+load("@org_tensorflow//tensorflow:workspace.bzl", "check_version")
+check_version("0.4.2")

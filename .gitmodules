@@ -1,0 +1,3 @@
+[submodule "tf-serving-integration/serving"]
+	path = tf-serving-integration/serving
+	url = https://github.com/tensorflow/serving.git
