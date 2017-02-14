@@ -7,6 +7,8 @@
    ~~~shell
    git submodule update --init --recursive
    ~~~
+   
+   This step will download several hundered megabytes of data.
 
 2. Then you should install all prerequisites for TensorFlow Serving, as listed
 on their [Installation page](https://tensorflow.github.io/serving/setup#prerequisites).
@@ -15,9 +17,10 @@ In particular, you should:
   2. Install building dependencies (e.g. `libpng`).
   3. Go to `./serving/tensorflow` and run `./configure` script from here.
      It's ok to leave all settings in their defaults for local set-up.
-3. Run `bazel run //cranberries/model_server` to build and run server. Building
-   may take a while because Bazel will download multiple dependencies and
-   compile everything from sources.
+3. Run `bazel run //cranberries/model_server` from `tf-serving-integration`
+   directory to build and run the server. Building may take a while because
+   Bazel will download even more dependencies and compile everything from
+   sources.
 4. After successful compilation and running you should see usage information,
    like this:
 
