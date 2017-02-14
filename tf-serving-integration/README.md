@@ -1,4 +1,4 @@
-# Installation
+# Building
 
 1. You should check out all submodules recursively, as this repository
    includes [TensorFlow Serving](https://github.com/tensorflow/serving) as a
