@@ -59,7 +59,8 @@ In particular, you should:
 
    There may be other options (like `--port`), run `model_server` without
    parameters to see them.
-4. You should see a bunch of informational messages.
+4. You should see a bunch of informational messages, including
+   `Running Model Server at ...`.
 
 ## Managing models
 
