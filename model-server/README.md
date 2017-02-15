@@ -17,7 +17,7 @@ In particular, you should:
   2. Install building dependencies (e.g. `libpng`).
   3. Go to `./serving/tensorflow` and run `./configure` script from here.
      It's ok to leave all settings in their defaults for local set-up.
-3. Run `bazel run //cranberries/model_server` from `tf-serving-integration`
+3. Run `bazel run //cranberries/model_server` from `model-server`
    directory to build and run the server. Building may take a while because
    Bazel will download even more dependencies and compile everything from
    sources.
