@@ -86,7 +86,8 @@ If you want to load a new model into model server, you should:
    if your client does not support that, create the znode with empty data and
    set its data later. Model server will use the first non-empty data it sees.
    Note that you cannot modify path of a version which is already loaded.
-3. If you want to load other versions, simply repeat step 2 for them.
+3. If you want to load other versions, simply repeat step 2 for them. You
+   should see log messages about picking up changes from Zookeeper.
 4. After model is seen by model server, its state is reflected in ephemeral
    znodes under `current-models` znode, e.g. this znode
 
