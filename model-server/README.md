@@ -17,11 +17,17 @@ In particular, you should:
   2. Install building dependencies (e.g. `libpng`).
   3. Go to `./serving/tensorflow` and run `./configure` script from here.
      It's ok to leave all settings in their defaults for local set-up.
-3. Run `bazel run //cranberries/model_server` from `model-server`
+3. Install prerequisites for Apache Zookeeper. I don't know what they are,
+   but I've found only one which can be missing so far:
+
+   ~~~shell
+   sudo apt-get install realpath
+   ~~~
+4. Run `bazel run //cranberries/model_server` from `model-server`
    directory to build and run the server. Building may take a while because
    Bazel will download even more dependencies and compile everything from
    sources.
-4. After successful compilation and running you should see usage information,
+5. After successful compilation and running you should see usage information,
    like this:
 
    ~~~
