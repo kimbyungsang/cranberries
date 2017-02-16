@@ -10,7 +10,8 @@ This was tested on Ubuntu 16.04.
    ~~~shell
    cp ../bazel-bin/cranberries/model_server/model_server .
    ~~~
-3. ~~~shell
+3. Run:
+   ~~~shell
    docker build .
    ~~~
 4. Docker should end its output with line like:
