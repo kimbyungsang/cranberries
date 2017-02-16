@@ -1,0 +1,54 @@
+version: '2'
+services:
+  model-server:
+    build: .
+    # TODO(egor.suvorov): get rid of `sleep 5` - temporary kludge to make server start after Zookeepers
+    command: bash -c 'sleep 5 && model_server --zookeeper_hosts=zoo1:2181,zoo2:2181,zoo3:2181 --zookeeper_base=/cranberries/servers/docker-composed'
+    ports:
+    - 8050:8050
+    links:
+    - zoo1
+    - zoo2
+    - zoo3
+    # TODO(egor.suvorov): get rid of `depends_on` section - temporary kludge to make server start after Zookeepers
+    depends_on:
+    - zoo1
+    - zoo2
+    - zoo3
+    volumes:
+    - ./volumes/models:/models
+  zoo-ui:
+    image: tobilg/zookeeper-webui
+    ports:
+    - 8080:8080
+    environment:
+      USER: admin
+      PASSWORD: admin
+      ZK_DEFAULT_NODE: zoo1:2181/,zoo2:2181/,zoo3:2181/
+  zoo1:
+    image: zookeeper
+    restart: always
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+    - ./volumes/zoo1/data:/data
+    - ./volumes/zoo1/datalog:/datalog
+  zoo2:
+    image: zookeeper
+    restart: always
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+    - ./volumes/zoo2/data:/data
+    - ./volumes/zoo2/datalog:/datalog
+  zoo3:
+    image: zookeeper
+    restart: always
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+    volumes:
+    - ./volumes/zoo3/data:/data
+    - ./volumes/zoo3/datalog:/datalog
