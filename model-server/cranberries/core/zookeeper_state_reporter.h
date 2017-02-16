@@ -19,6 +19,9 @@ namespace cranberries {
 // TODO(egor.suvorov): make it handle Zookeeper disconnections
 // gracefully, right now it assumes connection is always up and
 // it's enough to react to changes only.
+//
+// TODO(egor.suvorov): make it handle ephemeral znodes remaining from crashed
+// instance (they are not recreated and removed).
 class ZookeeperStateReporter {
  public:
   ZookeeperStateReporter(zookeeper_cc_util::Zookeeper *zookeeper)
