@@ -9,6 +9,7 @@ cc_library(
     "generated/*.c",
   ], exclude=[
     "src/cli.c",
+    "src/load_gen.c",
     "src/st_adaptor.c"
   ]) + [":config_header"],
   hdrs = glob(["include/*.h"]) + [":zookeeper_hdrs_generated"],
