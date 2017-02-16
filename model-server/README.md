@@ -13,7 +13,7 @@
 2. Then you should install all prerequisites for TensorFlow Serving, as listed
 on their [Installation page](https://tensorflow.github.io/serving/setup#prerequisites).
 In particular, you should:
-  1. Install [Bazel](https://bazel.build).
+  1. Install [Bazel](https://bazel.build) >=0.4.4.
   2. Install building dependencies (e.g. `libpng`).
   3. Go to `./serving/tensorflow` and run `./configure` script from here.
      It's ok to leave all settings in their defaults for local set-up.
