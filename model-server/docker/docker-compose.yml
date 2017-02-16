@@ -3,9 +3,9 @@ services:
   model-server:
     build: .
     # TODO(egor.suvorov): get rid of `sleep 5` - temporary kludge to make server start after Zookeepers
-    command: bash -c 'sleep 5 && model_server --zookeeper_hosts=zoo1:2181,zoo2:2181,zoo3:2181 --zookeeper_base=/cranberries/servers/docker-composed'
+    command: bash -c 'sleep 5 && model_server --zookeeper_hosts=zoo1:2181,zoo2:2181,zoo3:2181 --zookeeper_base=/cranberries/servers/docker-composed --port=8500'
     ports:
-    - 8050:8050
+    - 8500:8500
     links:
     - zoo1
     - zoo2

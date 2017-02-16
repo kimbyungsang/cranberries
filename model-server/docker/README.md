@@ -40,7 +40,7 @@ Example `docker-compose.yml` contains:
 1. Cluster of three Zookeeper servers.
 2. [Zookeeper Web UI](https://github.com/tobilg/docker-zookeeper-webui) which
    listens on port 8080.
-3. Model server which listens on port 8050.
+3. Model server which listens on port 8500.
 
 ## Running servers in foreground
 1. Run `docker-compose up`.
