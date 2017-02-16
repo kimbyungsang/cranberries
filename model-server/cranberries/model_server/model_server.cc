@@ -95,7 +95,7 @@ tensorflow::Status LoadCustomModelConfig(
   CHECK(any.UnpackTo(&config));
 
   std::unique_ptr<Zookeeper> zookeeper(
-      new Zookeeper(config.zookeeper_hosts(), 100 /* recv_timeout */, config.zookeeper_base()));
+      new Zookeeper(config.zookeeper_hosts(), 2000 /* recv_timeout */, config.zookeeper_base()));
   CHECK(zookeeper->Init()) << "Unable to init Zookeeper client";
 
   std::unique_ptr<ZookeeperStateReporter> state_reporter(
