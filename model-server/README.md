@@ -23,18 +23,10 @@ In particular, you should:
    ~~~shell
    sudo apt-get install realpath
    ~~~
-4. Run `bazel run //cranberries/model_server` from `model-server`
+4. Run `bazel build //cranberries/model_server` from `model-server`
    directory to build and run the server. Building may take a while because
    Bazel will download even more dependencies and compile everything from
    sources.
-5. After successful compilation and running you should see usage information,
-   like this:
-
-   ~~~
-   ...
-   --zookeeper_hosts="localhost:2181"      string  Specify list of Zookeeper servers in ensemble in format host1:port1,host2:port2,host3:port3.
-   ...
-   ~~~
 
 # Usage
 
