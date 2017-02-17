@@ -93,7 +93,7 @@ void ZookeeperSource::ReloadAspiredModels() {
   // We want to be notified when the node is created, so we set a watch; we
   // don't mind being notified when the node is removed as well.
   int res = zookeeper_->Exists(kAspiredModelsZnode, &reload_aspired_models_,
-                               NULL);
+                               nullptr);
   if (res == ZNONODE) {
     // Probably the node was just removed, waiting until it's created.
     return;
@@ -177,7 +177,7 @@ void ZookeeperSource::ReloadAspiredModelVersions(const char *path) {
       StrCat(kAspiredModelsZnode, "/", name, "/", version).c_str(),
       &path,
       &reload_aspired_model_version_,
-      NULL
+      nullptr
     );
     if (res != ZOK) {
       LOG(ERROR) << "Zookeeper error " << res;
