@@ -28,6 +28,20 @@ In particular, you should:
    Bazel will download even more dependencies and compile everything from
    sources.
 
+# Running tests
+
+1. You should install [Docker](https://www.docker.com/) in addition to Bazel to
+   run tests, as some of them run real Apache Zookeeper server inside Docker.
+2. Run
+
+   ~~~shell
+   bazel test //...
+   ~~~
+
+   to run all tests (here `...` stands for "all targets in this package and
+   subpackages"). First run may take some time to download Zookeeper docker
+   image, it should be faster afterwards.
+
 # Usage
 
 ## Initial configuration
