@@ -76,14 +76,17 @@ you should specify `/models/mnist_model/1` as its loading path in Zookeeper.
    ~~~
    /cranberries/servers/docker-composed/aspired-models/mnist/1
    ~~~
+   
    with the following data:
    ~~~
    /models/mnist_model/1
    ~~~
+   
 3. In the next few seconds model server should load the model and create the following node:
    ~~~
    cranberries/servers/docker-composed/current-models/mnist/1
    ~~~
+   
    with the following data:
    ~~~
    kAvailable
