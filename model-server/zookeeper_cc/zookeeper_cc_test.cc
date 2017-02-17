@@ -3,8 +3,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string>
+#include <chrono>
 #include <iostream>
 #include <sstream>
+#include <future>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -16,8 +18,23 @@ using ::testing::Eq;
 namespace {
 
 const int kRecvTimeoutMs = 1000;
-const int kConnectionRestoreRetries = 10;
-const int kConnectionRestoreDelayUs = 50 * 1000;
+const int kConnectionRestoreRetries = 20;
+const int kConnectionRestoreDelayUs = 100 * 1000;
+static_assert(kRecvTimeoutMs <
+    kConnectionRestoreRetries * kConnectionRestoreDelayUs,
+    "Total connection restore time should be greater than recv timeout");
+
+const auto kWatcherTimeout = std::chrono::milliseconds(100);
+
+template<typename R>
+bool is_ready(const std::future<R> &f) {
+  return f.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+}
+
+template<typename R>
+bool wait_ready(const std::future<R> &f) {
+  return f.wait_for(kWatcherTimeout) == std::future_status::ready;
+}
 
 }
 
@@ -56,7 +73,16 @@ class ZookeeperCcTest : public ::testing::Test {
   std::unique_ptr<Zookeeper> zk_;
 
   bool StartZookeeper() {
-    return system(("docker start " + container_id_ + " >/dev/null").c_str()) == 0;
+    if (system(("docker start " + container_id_ + " >/dev/null").c_str()) != 0) {
+      return false;
+    }
+    for (int i = 0; i < kConnectionRestoreRetries; i++) {
+      if (zk_->State() == ZOO_CONNECTED_STATE) {
+        return true;
+      }
+      usleep(kConnectionRestoreDelayUs);
+    }
+    return false;
   }
 
   bool StopZookeeper() {
@@ -140,13 +166,102 @@ TEST_F(ZookeeperCcTest, CreateRestartExists) {
       AnyOf(Eq(ZCONNECTIONLOSS), Eq(ZOPERATIONTIMEOUT)));
 
   ASSERT_TRUE(StartZookeeper());
-  int result;
-  for (int i = 0; i < kConnectionRestoreRetries; i++) {
-    result = zk_->Exists("some_node", nullptr, nullptr);
-    if (!(ZAPIERROR < result && result <= ZSYSTEMERROR)) {
-      break;
-    }
-    usleep(kConnectionRestoreDelayUs);
-  }
-  EXPECT_EQ(ZOK, result);
+  EXPECT_EQ(ZOK, zk_->Exists("some_node", nullptr, nullptr));
+}
+
+TEST_F(ZookeeperCcTest, ExistsWatcher) {
+  ASSERT_TRUE(zk_->Init());
+
+  std::promise<void> created_promise, deleted_promise;
+  Zookeeper::WatcherCallback created_watcher =
+      [&created_promise](int type, int state, const char *path) {
+        created_promise.set_value();
+      };
+  Zookeeper::WatcherCallback deleted_watcher =
+      [&deleted_promise](int type, int state, const char *path) {
+        deleted_promise.set_value();
+      };
+  std::future<void> created_future = created_promise.get_future();
+  std::future<void> deleted_future = deleted_promise.get_future();
+  ASSERT_EQ(ZNONODE, zk_->Exists("some_node", &created_watcher, nullptr));
+
+  EXPECT_FALSE(is_ready(created_future));
+  ASSERT_EQ(ZOK, zk_->EnforcePath("some_node", &ZOO_OPEN_ACL_UNSAFE));
+  EXPECT_TRUE(wait_ready(created_future));
+  ASSERT_EQ(ZOK, zk_->Exists("some_node", &deleted_watcher, nullptr));
+
+  EXPECT_FALSE(is_ready(deleted_future));
+  ASSERT_EQ(ZOK, zk_->Delete("some_node"));
+  EXPECT_TRUE(wait_ready(deleted_future));
+  ASSERT_EQ(ZNONODE, zk_->Exists("some_node", nullptr, nullptr));
+}
+
+// Ensure that watcher set before restart is triggered if the node is created
+// after restart (and disconnection); session events should also trigger the
+// watcher.
+TEST_F(ZookeeperCcTest, ExistsWatcherOnCreateAfterRestart) {
+  ASSERT_TRUE(zk_->Init());
+
+  std::promise<void> disconnected_promise, connected_promise, created_promise;
+  Zookeeper::WatcherCallback watcher =
+      [&disconnected_promise, &connected_promise, &created_promise]
+      (int type, int state, const char *path) {
+        if (type == ZOO_SESSION_EVENT) {
+          if (state == ZOO_CONNECTING_STATE) {
+            disconnected_promise.set_value();
+          } else if (state == ZOO_CONNECTED_STATE) {
+            connected_promise.set_value();
+          }
+        }
+        if (type == ZOO_CREATED_EVENT) {
+          created_promise.set_value();
+        }
+      };
+  std::future<void> disconnected_future = disconnected_promise.get_future();
+  std::future<void> connected_future = connected_promise.get_future();
+  std::future<void> created_future = created_promise.get_future();
+  ASSERT_EQ(ZNONODE, zk_->Exists("some_node", &watcher, nullptr));
+  EXPECT_FALSE(is_ready(disconnected_future));
+  EXPECT_FALSE(is_ready(connected_future));
+  EXPECT_FALSE(is_ready(created_future));
+
+  ASSERT_TRUE(StopZookeeper());
+  EXPECT_TRUE(wait_ready(disconnected_future));
+  EXPECT_FALSE(is_ready(connected_future));
+  EXPECT_FALSE(is_ready(created_future));
+
+  ASSERT_TRUE(StartZookeeper());
+  EXPECT_TRUE(wait_ready(connected_future));
+  EXPECT_FALSE(is_ready(created_future));
+
+  ASSERT_EQ(ZOK, zk_->EnforcePath("some_node", &ZOO_OPEN_ACL_UNSAFE));
+  EXPECT_TRUE(is_ready(created_future));
+
+  ASSERT_EQ(ZOK, zk_->Exists("some_node", nullptr, nullptr));
+}
+
+// Ensure that watcher which could not be set while server is down is not
+// triggered after node is created after reconnection.
+TEST_F(ZookeeperCcTest, ExistsWatcherSetDuringRestart) {
+  ASSERT_TRUE(zk_->Init());
+
+  std::promise<void> promise;
+  Zookeeper::WatcherCallback watcher =
+      [&promise](int type, int state, const char *path) {
+        if (type == ZOO_CREATED_EVENT) {
+          promise.set_value();
+        }
+      };
+  std::future<void> future = promise.get_future();
+
+  ASSERT_TRUE(StopZookeeper());
+  ASSERT_THAT(zk_->Exists("some_node", &watcher, nullptr),
+      AnyOf(Eq(ZCONNECTIONLOSS), Eq(ZOPERATIONTIMEOUT)));
+  ASSERT_TRUE(StartZookeeper());
+
+  EXPECT_FALSE(is_ready(future));
+  ASSERT_EQ(ZOK, zk_->EnforcePath("some_node", &ZOO_OPEN_ACL_UNSAFE));
+  EXPECT_FALSE(wait_ready(future));
+
+  ASSERT_EQ(ZOK, zk_->Exists("some_node", nullptr, nullptr));
 }
