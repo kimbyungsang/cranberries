@@ -8,47 +8,12 @@
 #include <gmock/gmock.h>
 
 using zookeeper_cc::Zookeeper;
-using zookeeper_cc::EnsureTrailingSlash;
-using zookeeper_cc::GetLastPathSegment;
 using ::testing::UnorderedElementsAre;
-using ::testing::StrEq;
 
 namespace {
 
 const int kRecvTimeoutMs = 1000;
 
-}
-
-TEST(ZookeeperCcEnsureTrailingSlashTest, EmptyString) {
-  EXPECT_EQ("/", EnsureTrailingSlash(""));
-}
-
-TEST(ZookeeperCcEnsureTrailingSlashTest, SingleSlash) {
-  EXPECT_EQ("/", EnsureTrailingSlash("/"));
-}
-
-TEST(ZookeeperCcEnsureTrailingSlashTest, SeveralNodesNoTrailingSlash) {
-  EXPECT_EQ("/node1/node2/", EnsureTrailingSlash("/node1/node2"));
-}
-
-TEST(ZookeeperCcEnsureTrailingSlashTest, SeveralNodesWithTrailingSlash) {
-  EXPECT_EQ("/node1/node2/", EnsureTrailingSlash("/node1/node2/"));
-}
-
-TEST(ZookeeperCcGetLastPathSegmentTest, EmptyString) {
-  EXPECT_THAT(GetLastPathSegment(""), StrEq(""));
-}
-
-TEST(ZookeeperCcGetLastPathSegmentTest, SingleNode) {
-  EXPECT_THAT(GetLastPathSegment("node"), StrEq("node"));
-}
-
-TEST(ZookeeperCcGetLastPathSegmentTest, SingleNodeStartsWithSlash) {
-  EXPECT_THAT(GetLastPathSegment("/node"), StrEq("node"));
-}
-
-TEST(ZookeeperCcGetLastPathSegmentTest, MultipleNodes) {
-  EXPECT_THAT(GetLastPathSegment("/node1/node2"), StrEq("node2"));
 }
 
 class ZookeeperCcTest : public ::testing::Test {

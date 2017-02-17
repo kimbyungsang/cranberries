@@ -9,14 +9,6 @@
 
 namespace zookeeper_cc {
 
-// Returns modified `data` with added trailing slash,
-// unless it was already presented.
-std::string EnsureTrailingSlash(std::string data);
-
-// Returns part of the `path` after last slash. If there
-// are no slashes in the `path`, returns `path`.
-const char* GetLastPathSegment(const char *path);
-
 // RAII wrapper around zhandle_t for talking to Zookeeper. Allows to specify
 // "base" path which will be automatically prepended to all requests. Note that
 // callbacks will receive full paths, including "base" path.

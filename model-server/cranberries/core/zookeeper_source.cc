@@ -4,6 +4,7 @@
 #include "tensorflow/core/lib/strings/numbers.h"
 #include "tensorflow_serving/core/servable_data.h"
 #include "tensorflow_serving/core/servable_id.h"
+#include "zookeeper_cc/path_utils.h"
 
 using tensorflow::strings::StrCat;
 using tensorflow::strings::safe_strto64;

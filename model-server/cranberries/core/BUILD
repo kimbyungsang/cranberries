@@ -5,6 +5,7 @@ cc_library(
   visibility = ["//visibility:public"],
   deps = [
     "//zookeeper_cc",
+    "//zookeeper_cc:path_utils",
     "@org_tensorflow//tensorflow/core:lib",
     "@tf_serving//tensorflow_serving/core:source",
     "@tf_serving//tensorflow_serving/core:storage_path",

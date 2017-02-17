@@ -4,8 +4,16 @@ cc_library(
   hdrs = ["zookeeper_cc.h"],
   visibility = ["//visibility:public"],
   deps = [
+    ":path_utils",
     "@zookeeper//:zookeeper_mt",
   ],
+)
+
+cc_library(
+  name = "path_utils",
+  srcs = ["path_utils.cc"],
+  hdrs = ["path_utils.h"],
+  visibility = ["//visibility:public"],
 )
 
 sh_test(
@@ -35,6 +43,15 @@ cc_binary(
   testonly = 1,
   deps = [
     ":zookeeper_cc",
+    "//external:gtest_main",
+  ],
+)
+
+cc_test(
+  name = "path_utils_test",
+  srcs = ["path_utils_test.cc"],
+  deps = [
+    ":path_utils",
     "//external:gtest_main",
   ],
 )
