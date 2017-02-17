@@ -5,7 +5,7 @@
 #include "tensorflow/core/platform/mutex.h"
 #include "tensorflow_serving/core/source.h"
 #include "tensorflow_serving/core/storage_path.h"
-#include "zookeeper_cc_util/zookeeper_cc_util.h"
+#include "zookeeper_cc/zookeeper_cc.h"
 
 namespace tensorflow {
 namespace serving {
@@ -14,7 +14,7 @@ namespace cranberries {
 // ZookeeperSouce is an implementation Source<StoragePath> interface which
 // monitors Zookeeper for znodes in the following format:
 // <base-path>/aspired-models/<model-name>/<model-version-id>
-// Here <base-path> prepending is handled by `zookeeper_cc_util::Zookeper`.
+// Here <base-path> prepending is handled by `zookeeper_cc::Zookeper`.
 //
 // The following structure inside Zookeeper is assumed:
 // <base-path>
@@ -59,7 +59,7 @@ namespace cranberries {
 // TODO(egor.suvorov): make it asynchronous(?).
 class ZookeeperSource : public Source<StoragePath> {
  public:
-  ZookeeperSource(zookeeper_cc_util::Zookeeper *zookeeper);
+  ZookeeperSource(zookeeper_cc::Zookeeper *zookeeper);
   ~ZookeeperSource() {}
 
   void SetAspiredVersionsCallback(AspiredVersionsCallback callback) override;
@@ -67,7 +67,7 @@ class ZookeeperSource : public Source<StoragePath> {
  private:
   mutable mutex mu_;
 
-  using WatcherCallback = zookeeper_cc_util::Zookeeper::WatcherCallback;
+  using WatcherCallback = zookeeper_cc::Zookeeper::WatcherCallback;
 
   void ReloadAspiredModels();
   void ReloadAspiredModelVersions(const char *path);
@@ -77,7 +77,7 @@ class ZookeeperSource : public Source<StoragePath> {
   const WatcherCallback reload_aspired_model_versions_;
   const WatcherCallback reload_aspired_model_version_;
 
-  zookeeper_cc_util::Zookeeper *zookeeper_ GUARDED_BY(mu_);
+  zookeeper_cc::Zookeeper *zookeeper_ GUARDED_BY(mu_);
   AspiredVersionsCallback set_aspired_versions_callback_ GUARDED_BY(mu_);
   std::unordered_set<string> monitored_models_ GUARDED_BY(mu_);
 

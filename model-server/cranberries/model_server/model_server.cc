@@ -50,7 +50,7 @@
 #include "tensorflow_serving/servables/tensorflow/saved_model_bundle_source_adapter.h"
 #include "cranberries/model_server/predict_impl.h"
 #include "cranberries/model_server/model_server_config.pb.h"
-#include "zookeeper_cc_util/zookeeper_cc_util.h"
+#include "zookeeper_cc/zookeeper_cc.h"
 #include "cranberries/core/zookeeper_source.h"
 #include "cranberries/core/zookeeper_state_reporter.h"
 
@@ -81,7 +81,7 @@ using tensorflow::serving::PredictionService;
 using tensorflow::Status;
 
 using cranberries::ModelServerConfig;
-using zookeeper_cc_util::Zookeeper;
+using zookeeper_cc::Zookeeper;
 using tensorflow::serving::cranberries::ZookeeperSource;
 using tensorflow::serving::cranberries::ZookeeperStateReporter;
 

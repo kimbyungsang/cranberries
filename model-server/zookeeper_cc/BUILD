@@ -1,7 +1,7 @@
 cc_library(
-  name = "zookeeper_cc_util",
-  srcs = ["zookeeper_cc_util.cc"],
-  hdrs = ["zookeeper_cc_util.h"],
+  name = "zookeeper_cc",
+  srcs = ["zookeeper_cc.cc"],
+  hdrs = ["zookeeper_cc.h"],
   visibility = ["//visibility:public"],
   deps = [
     "@zookeeper//:zookeeper_mt",
@@ -9,14 +9,14 @@ cc_library(
 )
 
 sh_test(
-  name = "zookeeper_cc_util_test",
-  srcs = ["zookeeper_cc_util_test.sh"],
+  name = "zookeeper_cc_test",
+  srcs = ["zookeeper_cc_test.sh"],
   size = "small",
   deps = [
     ":run_zookeeper_server",
   ],
   data = [
-    ":zookeeper_cc_util_test_impl",
+    ":zookeeper_cc_test_impl",
   ],
 )
 
@@ -30,11 +30,11 @@ sh_library(
 )
 
 cc_binary(
-  name = "zookeeper_cc_util_test_impl",
-  srcs = ["zookeeper_cc_util_test.cc"],
+  name = "zookeeper_cc_test_impl",
+  srcs = ["zookeeper_cc_test.cc"],
   testonly = 1,
   deps = [
-    ":zookeeper_cc_util",
+    ":zookeeper_cc",
     "//external:gtest_main",
   ],
 )

@@ -1,4 +1,4 @@
-#include "zookeeper_cc_util/zookeeper_cc_util.h"
+#include "zookeeper_cc/zookeeper_cc.h"
 
 #include <stdlib.h>
 #include <string>
@@ -7,9 +7,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-using zookeeper_cc_util::Zookeeper;
-using zookeeper_cc_util::EnsureTrailingSlash;
-using zookeeper_cc_util::GetLastPathSegment;
+using zookeeper_cc::Zookeeper;
+using zookeeper_cc::EnsureTrailingSlash;
+using zookeeper_cc::GetLastPathSegment;
 using ::testing::UnorderedElementsAre;
 using ::testing::StrEq;
 
@@ -19,39 +19,39 @@ const int kRecvTimeoutMs = 1000;
 
 }
 
-TEST(ZookeeperCcUtilEnsureTrailingSlashTest, EmptyString) {
+TEST(ZookeeperCcEnsureTrailingSlashTest, EmptyString) {
   EXPECT_EQ("/", EnsureTrailingSlash(""));
 }
 
-TEST(ZookeeperCcUtilEnsureTrailingSlashTest, SingleSlash) {
+TEST(ZookeeperCcEnsureTrailingSlashTest, SingleSlash) {
   EXPECT_EQ("/", EnsureTrailingSlash("/"));
 }
 
-TEST(ZookeeperCcUtilEnsureTrailingSlashTest, SeveralNodesNoTrailingSlash) {
+TEST(ZookeeperCcEnsureTrailingSlashTest, SeveralNodesNoTrailingSlash) {
   EXPECT_EQ("/node1/node2/", EnsureTrailingSlash("/node1/node2"));
 }
 
-TEST(ZookeeperCcUtilEnsureTrailingSlashTest, SeveralNodesWithTrailingSlash) {
+TEST(ZookeeperCcEnsureTrailingSlashTest, SeveralNodesWithTrailingSlash) {
   EXPECT_EQ("/node1/node2/", EnsureTrailingSlash("/node1/node2/"));
 }
 
-TEST(ZookeeperCcUtilGetLastPathSegmentTest, EmptyString) {
+TEST(ZookeeperCcGetLastPathSegmentTest, EmptyString) {
   EXPECT_THAT(GetLastPathSegment(""), StrEq(""));
 }
 
-TEST(ZookeeperCcUtilGetLastPathSegmentTest, SingleNode) {
+TEST(ZookeeperCcGetLastPathSegmentTest, SingleNode) {
   EXPECT_THAT(GetLastPathSegment("node"), StrEq("node"));
 }
 
-TEST(ZookeeperCcUtilGetLastPathSegmentTest, SingleNodeStartsWithSlash) {
+TEST(ZookeeperCcGetLastPathSegmentTest, SingleNodeStartsWithSlash) {
   EXPECT_THAT(GetLastPathSegment("/node"), StrEq("node"));
 }
 
-TEST(ZookeeperCcUtilGetLastPathSegmentTest, MultipleNodes) {
+TEST(ZookeeperCcGetLastPathSegmentTest, MultipleNodes) {
   EXPECT_THAT(GetLastPathSegment("/node1/node2"), StrEq("node2"));
 }
 
-class ZookeeperCcUtilTest : public ::testing::Test {
+class ZookeeperCcTest : public ::testing::Test {
  protected:
   virtual void SetUp() override {
     char *hosts = getenv("ZOOKEEPER_TEST_HOSTS");
@@ -81,27 +81,27 @@ class ZookeeperCcUtilTest : public ::testing::Test {
   std::unique_ptr<Zookeeper> zk_;
 };
 
-TEST_F(ZookeeperCcUtilTest, EnforceBasePathAndExists) {
+TEST_F(ZookeeperCcTest, EnforceBasePathAndExists) {
   ASSERT_TRUE(zk_->Init());
   ASSERT_EQ(ZOK, zk_->EnforcePath("", &ZOO_OPEN_ACL_UNSAFE));
 
   EXPECT_EQ(ZOK, zk_->Exists("", nullptr, nullptr));
 }
 
-TEST_F(ZookeeperCcUtilTest, EnforceNodeAndExists) {
+TEST_F(ZookeeperCcTest, EnforceNodeAndExists) {
   ASSERT_TRUE(zk_->Init());
   ASSERT_EQ(ZOK, zk_->EnforcePath("some_node", &ZOO_OPEN_ACL_UNSAFE));
 
   EXPECT_EQ(ZOK, zk_->Exists("some_node", nullptr, nullptr));
 }
 
-TEST_F(ZookeeperCcUtilTest, NodeNotExists) {
+TEST_F(ZookeeperCcTest, NodeNotExists) {
   ASSERT_TRUE(zk_->Init());
 
   EXPECT_EQ(ZNONODE, zk_->Exists("some_node", nullptr, nullptr));
 }
 
-TEST_F(ZookeeperCcUtilTest, GetCreateGet) {
+TEST_F(ZookeeperCcTest, GetCreateGet) {
   ASSERT_TRUE(zk_->Init());
   ASSERT_EQ(ZOK, zk_->EnforcePath("", &ZOO_OPEN_ACL_UNSAFE));
 
@@ -116,7 +116,7 @@ TEST_F(ZookeeperCcUtilTest, GetCreateGet) {
   EXPECT_EQ("some_value", data);
 }
 
-TEST_F(ZookeeperCcUtilTest, SetGet) {
+TEST_F(ZookeeperCcTest, SetGet) {
   ASSERT_TRUE(zk_->Init());
   ASSERT_EQ(ZOK, zk_->EnforcePath("some_node", &ZOO_OPEN_ACL_UNSAFE));
 
@@ -127,7 +127,7 @@ TEST_F(ZookeeperCcUtilTest, SetGet) {
   EXPECT_EQ("some_value", data);
 }
 
-TEST_F(ZookeeperCcUtilTest, GetChildren) {
+TEST_F(ZookeeperCcTest, GetChildren) {
   ASSERT_TRUE(zk_->Init());
   ASSERT_EQ(ZOK, zk_->EnforcePath("node1/1", &ZOO_OPEN_ACL_UNSAFE));
   ASSERT_EQ(ZOK, zk_->EnforcePath("node1/2", &ZOO_OPEN_ACL_UNSAFE));

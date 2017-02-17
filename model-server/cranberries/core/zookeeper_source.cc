@@ -63,7 +63,7 @@ namespace tensorflow {
 namespace serving {
 namespace cranberries {
 
-ZookeeperSource::ZookeeperSource(zookeeper_cc_util::Zookeeper *zookeeper)
+ZookeeperSource::ZookeeperSource(zookeeper_cc::Zookeeper *zookeeper)
   : reload_aspired_models_(
       [this](int type, int state, const char* path) {
           ReloadAspiredModels();
@@ -140,7 +140,7 @@ void ZookeeperSource::ReloadAspiredModels() {
 }
 
 void ZookeeperSource::ReloadAspiredModelVersions(const char *path) {
-  const char *name = zookeeper_cc_util::GetLastPathSegment(path);
+  const char *name = zookeeper_cc::GetLastPathSegment(path);
 
   // Get set of children and set watch for it.
   std::vector<std::string> versions;

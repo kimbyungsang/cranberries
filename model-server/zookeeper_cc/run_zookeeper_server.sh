@@ -2,7 +2,7 @@
 
 # This scripts runs Zookeeper server in a Docker container.
 #
-# Just `source zookeeper_cc_util/run_zookeeper_server.sh` to start Zookeeper
+# Just `source zookeeper_cc/run_zookeeper_server.sh` to start Zookeeper
 # server in background Docker container and get connection string in
 # ZOOKEEPER_TEST_HOSTS. The container will be automatically shut down on exit.
 

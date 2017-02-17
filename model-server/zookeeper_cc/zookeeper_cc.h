@@ -1,5 +1,5 @@
-#ifndef ZOOKEEPER_CC_UTIL_H_
-#define ZOOKEEPER_CC_UTIL_H_
+#ifndef ZOOKEEPER_CC_ZOOKEEPER_CC_H_
+#define ZOOKEEPER_CC_ZOOKEEPER_CC_H_
 
 #include <functional>
 #include <memory>
@@ -7,7 +7,7 @@
 #include <vector>
 #include "zookeeper.h"
 
-namespace zookeeper_cc_util {
+namespace zookeeper_cc {
 
 // Returns modified `data` with added trailing slash,
 // unless it was already presented.
@@ -67,6 +67,6 @@ class Zookeeper {
   const std::string base_;
 };
 
-}  // namespace zookeeper_cc_util
+}  // namespace zookeeper_cc
 
-#endif  // ZOOKEEPER_CCC_UTIL_H_
+#endif  // ZOOKEEPER_CC_ZOOKEEPER_CC_H_

@@ -1,10 +1,10 @@
-#include "zookeeper_cc_util.h"
+#include "zookeeper_cc.h"
 
 #include <utility>
 #include <assert.h>
 #include <string.h>
 
-namespace zookeeper_cc_util {
+namespace zookeeper_cc {
 
 std::string EnsureTrailingSlash(std::string data) {
   if (!data.empty() && data[data.size() - 1] == '/') {
@@ -166,4 +166,4 @@ void Zookeeper::WatcherHandler(zhandle_t *zzh, int type, int state,
   (*static_cast<WatcherCallback*>(watcherCtx))(type, state, path);
 }
 
-}  // namespace zookeeper_cc_util
+}  // namespace zookeeper_cc

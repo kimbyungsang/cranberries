@@ -3,7 +3,7 @@
 
 #include "tensorflow_serving/core/servable_state.h"
 #include "tensorflow_serving/util/event_bus.h"
-#include "zookeeper_cc_util/zookeeper_cc_util.h"
+#include "zookeeper_cc/zookeeper_cc.h"
 
 namespace tensorflow {
 namespace serving {
@@ -24,7 +24,7 @@ namespace cranberries {
 // instance (they are not recreated and removed).
 class ZookeeperStateReporter {
  public:
-  ZookeeperStateReporter(zookeeper_cc_util::Zookeeper *zookeeper)
+  ZookeeperStateReporter(zookeeper_cc::Zookeeper *zookeeper)
     : zookeeper_(zookeeper) {}
   ~ZookeeperStateReporter() {}
 
@@ -33,7 +33,7 @@ class ZookeeperStateReporter {
  private:
   void ProcessEvent(const EventBus<ServableState>::EventAndTime &ev);
 
-  zookeeper_cc_util::Zookeeper *zookeeper_;
+  zookeeper_cc::Zookeeper *zookeeper_;
 };
 
 }  // namespace cranberries

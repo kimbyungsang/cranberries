@@ -30,7 +30,7 @@ cc_binary(
     ":model_server_config_cc_lib",
     "//cranberries/core:zookeeper_source",
     "//cranberries/core:zookeeper_state_reporter",
-    "//zookeeper_cc_util",
+    "//zookeeper_cc",
     ":predict_impl",
   ] + TENSORFLOW_DEPS + SUPPORTED_TENSORFLOW_OPS,
 )
