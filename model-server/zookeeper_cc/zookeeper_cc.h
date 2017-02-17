@@ -38,6 +38,7 @@ class Zookeeper {
   int Delete(const char *path, int version = -1);
   int GetChildren(const char *path, std::vector<std::string> *children_name,
                   const WatcherCallback *watcher);
+  int State();
 
   // Tries to create all znodes in path from top to bottom. If some node
   // already exists, it's not touched. Nodes are created with empty content.

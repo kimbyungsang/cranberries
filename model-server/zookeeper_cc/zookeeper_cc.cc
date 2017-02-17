@@ -144,6 +144,10 @@ int Zookeeper::EnforcePath(const char *rel_path, struct ACL_vector *acl) {
   return res;
 }
 
+int Zookeeper::State() {
+  return zoo_state(zh_.get());
+}
+
 void Zookeeper::WatcherHandler(zhandle_t *zzh, int type, int state,
                  const char *path, void *watcherCtx) {
   (*static_cast<WatcherCallback*>(watcherCtx))(type, state, path);
