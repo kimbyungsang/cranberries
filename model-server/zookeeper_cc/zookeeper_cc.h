@@ -12,6 +12,8 @@ namespace zookeeper_cc {
 // RAII wrapper around zhandle_t for talking to Zookeeper. Allows to specify
 // "base" path which will be automatically prepended to all requests. Note that
 // callbacks will receive full paths, including "base" path.
+//
+// TODO(egor.suvorov): add callbacks for "connected" and "closed" events.
 class Zookeeper {
  public:
   // Instantiate wrapper, do not create zhandle_t and do not make
