@@ -33,6 +33,8 @@ Zookeeper::Zookeeper(std::string hosts, int recv_timeout, std::string base)
 std::string Zookeeper::GetAbsolutePath(const char *path) {
   if (path[0] == '/') {
     return base_ + (path + 1);
+  } else if (!path[0]) {
+    return base_.substr(0, base_.size() - 1);
   } else {
     return base_ + path;
   }
@@ -132,7 +134,7 @@ int Zookeeper::GetChildren(const char *path,
 
 int Zookeeper::EnforcePath(const char *rel_path, struct ACL_vector *acl) {
   assert(zh_);
-  std::string full_path = GetAbsolutePath(rel_path) + "/";
+  std::string full_path = EnsureTrailingSlash(GetAbsolutePath(rel_path));
   int res = ZOK;
   // Iterate over all parent znodes of `full_path` by replacing slashes
   // with null characters one-by-one, skipping the very first slash at
