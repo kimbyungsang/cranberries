@@ -8,11 +8,11 @@ new_http_archive(
 
 local_repository(
     name = "tf_serving",
-    path = "serving",
+    path = "../serving",
 )
 local_repository(
     name = "org_tensorflow",
-    path = "serving/tensorflow",
+    path = "../serving/tensorflow",
 )
 
 # TensorFlow depends on "io_bazel_rules_closure" so we need this here.

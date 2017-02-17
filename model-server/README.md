@@ -15,8 +15,8 @@ on their [Installation page](https://tensorflow.github.io/serving/setup#prerequi
 In particular, you should:
   1. Install [Bazel](https://bazel.build) >=0.4.4.
   2. Install building dependencies (e.g. `libpng`).
-  3. Go to `./serving/tensorflow` and run `./configure` script from here.
-     It's ok to leave all settings in their defaults for local set-up.
+  3. Go to `<repo-root>/serving/tensorflow` and run `./configure` script from
+     here. It's ok to leave all settings in their defaults for local set-up.
 3. Install prerequisites for Apache Zookeeper. I don't know what they are,
    but I've found only one which can be missing so far:
 
