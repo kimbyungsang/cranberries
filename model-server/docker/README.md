@@ -14,6 +14,7 @@ This was tested on Ubuntu 16.04.
    ~~~shell
    docker build .
    ~~~
+   
 4. Docker should end its output with line like:
 
    ~~~
