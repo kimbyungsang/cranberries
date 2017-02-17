@@ -24,7 +24,7 @@ echo "OK, container id is $CID"
 
 function on_exit() {
   echo -n "Stopping container $CID... "
-  docker stop "$CID"
+  docker stop "$CID" >/dev/null
   echo "OK"
 }
 trap on_exit EXIT
@@ -36,3 +36,4 @@ wait_cmd_with_timeout 5 nc -w 1 "$IP" "$PORT"
 echo " OK"
 
 export ZOOKEEPER_TEST_HOSTS="$IP:$PORT"
+export ZOOKEEPER_TEST_DOCKER_CONTAINER_ID="$CID"

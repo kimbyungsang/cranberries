@@ -1,6 +1,7 @@
 #include "zookeeper_cc/zookeeper_cc.h"
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -9,10 +10,14 @@
 
 using zookeeper_cc::Zookeeper;
 using ::testing::UnorderedElementsAre;
+using ::testing::AnyOf;
+using ::testing::Eq;
 
 namespace {
 
 const int kRecvTimeoutMs = 1000;
+const int kConnectionRestoreRetries = 10;
+const int kConnectionRestoreDelayUs = 50 * 1000;
 
 }
 
@@ -21,6 +26,11 @@ class ZookeeperCcTest : public ::testing::Test {
   virtual void SetUp() override {
     char *hosts = getenv("ZOOKEEPER_TEST_HOSTS");
     ASSERT_TRUE(hosts && strlen(hosts) > 0) << "ZOOKEEPER_TEST_HOSTS is unspecified";
+
+    char *container_id = getenv("ZOOKEEPER_TEST_DOCKER_CONTAINER_ID");
+    ASSERT_TRUE(container_id && strlen(container_id) > 0)
+        << "ZOOKEEPER_TEST_DOCKER_CONTAINER_ID is unspecified";
+    container_id_ = container_id;
 
     // Construct random path inside Zookeeper to provide some tests isolation.
     auto unit_test = ::testing::UnitTest::GetInstance();
@@ -44,6 +54,17 @@ class ZookeeperCcTest : public ::testing::Test {
   }
 
   std::unique_ptr<Zookeeper> zk_;
+
+  bool StartZookeeper() {
+    return system(("docker start " + container_id_ + " >/dev/null").c_str()) == 0;
+  }
+
+  bool StopZookeeper() {
+    return system(("docker stop " + container_id_ + " >/dev/null").c_str()) == 0;
+  }
+
+ private:
+  std::string container_id_;
 };
 
 TEST_F(ZookeeperCcTest, EnforceBasePathAndExists) {
@@ -108,4 +129,24 @@ TEST_F(ZookeeperCcTest, GetChildren) {
 
   EXPECT_EQ(ZOK, zk_->GetChildren("", &children, nullptr));
   EXPECT_THAT(children, UnorderedElementsAre("node1", "node2"));
+}
+
+TEST_F(ZookeeperCcTest, CreateRestartExists) {
+  ASSERT_TRUE(zk_->Init());
+  ASSERT_EQ(ZOK, zk_->EnforcePath("some_node", &ZOO_OPEN_ACL_UNSAFE));
+
+  ASSERT_TRUE(StopZookeeper());
+  EXPECT_THAT(zk_->Exists("some_node", nullptr, nullptr),
+      AnyOf(Eq(ZCONNECTIONLOSS), Eq(ZOPERATIONTIMEOUT)));
+
+  ASSERT_TRUE(StartZookeeper());
+  int result;
+  for (int i = 0; i < kConnectionRestoreRetries; i++) {
+    result = zk_->Exists("some_node", nullptr, nullptr);
+    if (!(ZAPIERROR < result && result <= ZSYSTEMERROR)) {
+      break;
+    }
+    usleep(kConnectionRestoreDelayUs);
+  }
+  EXPECT_EQ(ZOK, result);
 }
