@@ -1,6 +1,6 @@
 #!/bin/bash
-# Courtesy of https://github.com/pagespeed/mod_pagespeed/blob/d55c2d7a2c64fab183f77571a18dad80ffe3cb1b/install/shell_utils.sh
 
+# Courtesy of https://github.com/pagespeed/mod_pagespeed/blob/d55c2d7a2c64fab183f77571a18dad80ffe3cb1b/install/shell_utils.sh
 # Usage: wait_cmd_with_timeout TIMEOUT_SECS CMD [ARG ...]
 # Waits until CMD succeed or TIMEOUT_SECS passes, printing progress dots.
 # Returns exit code of CMD. It works with CMD which does not terminate
@@ -19,3 +19,24 @@ function wait_cmd_with_timeout() {
   done
   eval "${@:2}"
 }
+
+# We have to set at least one item, otherwise the array would be considered
+# unset.
+ATEXIT=("true")
+function atexit() {
+  ATEXIT=("$*" "${ATEXIT[@]}")
+}
+
+if [[ -n "$(trap -p EXIT)" ]]; then
+  echo "EXIT trap is already set up, failing" >&2
+  exit 1
+fi
+
+function atexit_handler() {
+  local EXPR
+  for EXPR in "${ATEXIT[@]}"; do
+    eval "$EXPR"
+  done
+}
+
+trap atexit_handler EXIT

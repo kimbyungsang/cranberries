@@ -8,11 +8,6 @@
 
 source sh_utils/sh_utils.sh
 
-if [[ -n "$(trap -p EXIT)" ]]; then
-  echo "EXIT trap is already set up, failing" >&2
-  exit 1
-fi
-
 if ! hash docker 2>/dev/null; then
   echo "Docker is required to run Zookeeper server" >&2
   exit 1
@@ -22,12 +17,12 @@ echo -n "Starting dockered Zookeeper... "
 CID=$(docker run -d zookeeper)
 echo "OK, container id is $CID"
 
-function on_exit() {
+function stop_zookeeper() {
   echo -n "Stopping container $CID... "
   docker stop "$CID" >/dev/null
   echo "OK"
 }
-trap on_exit EXIT
+atexit stop_zookeeper
 
 IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$CID")
 PORT=2181
