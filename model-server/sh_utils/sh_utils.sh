@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! [ -z "${SH_UTILS_SOURCED+x}" ]; then
+  return
+fi
+SH_UTILS_SOURCED=1
+
 # Courtesy of https://github.com/pagespeed/mod_pagespeed/blob/d55c2d7a2c64fab183f77571a18dad80ffe3cb1b/install/shell_utils.sh
 # Usage: wait_cmd_with_timeout TIMEOUT_SECS CMD [ARG ...]
 # Waits until CMD succeed or TIMEOUT_SECS passes, printing progress dots.
