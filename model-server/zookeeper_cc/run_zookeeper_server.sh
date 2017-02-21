@@ -8,7 +8,7 @@
 
 source sh_utils/sh_utils.sh
 
-if ! hash docker 2>/dev/null; then
+if ! type docker >/dev/null 2>&1; then
   echo "Docker is required to run Zookeeper server" >&2
   exit 1
 fi
