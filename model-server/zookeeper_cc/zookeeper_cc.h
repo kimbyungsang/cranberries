@@ -26,6 +26,8 @@ class Zookeeper {
   // connection can still be in progress).
   bool Init();
 
+  const char *GetBasePath() { return base_.c_str(); }
+
   using WatcherCallback = std::function<void(int, int, const char*)>;
 
   // Following routines call corresponding blocking zoo_* routines
