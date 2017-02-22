@@ -1,16 +1,6 @@
-sh_test(
-  name = "model_loading_test",
-  srcs = ["run_py_test.sh"],
-  data = [":model_loading_test_impl"],
-  deps = [":run_all_servers"],
-)
+load(":integration_test.bzl", "integration_test")
 
-py_library(
-  name = "model_loading_test_impl",
-  testonly = 1,
-  srcs = ["model_loading_test_impl.py"],
-  deps = [":utils"],
-)
+integration_test("model_loading_test")
 
 py_library(
   name = "utils",
