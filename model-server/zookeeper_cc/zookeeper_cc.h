@@ -30,6 +30,7 @@ class Zookeeper {
 
   // Following routines call corresponding blocking zoo_* routines
   // and returns its status: ZOK, etc.
+  void SetWatcher(const WatcherCallback *watcher);
   int Create(const char *path, const std::string &value,
              bool ephemeral, struct ACL_vector *acl);
   int Exists(const char *path, const WatcherCallback *watcher,

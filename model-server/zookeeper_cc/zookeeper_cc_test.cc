@@ -76,6 +76,10 @@ class ZookeeperCcTest : public ::testing::Test {
     if (system(("docker start " + container_id_ + " >/dev/null").c_str()) != 0) {
       return false;
     }
+    return WaitForConnection();
+  }
+
+  bool WaitForConnection() {
     for (int i = 0; i < kConnectionRestoreRetries; i++) {
       if (zk_->State() == ZOO_CONNECTED_STATE) {
         return true;
@@ -264,4 +268,35 @@ TEST_F(ZookeeperCcTest, ExistsWatcherSetDuringRestart) {
   EXPECT_FALSE(wait_ready(future));
 
   ASSERT_EQ(ZOK, zk_->Exists("some_node", nullptr, nullptr));
+}
+
+TEST_F(ZookeeperCcTest, GlobalWatcherSessionEvents) {
+  ASSERT_TRUE(zk_->Init());
+  ASSERT_TRUE(WaitForConnection());
+
+  std::promise<void> connecting_promise, connected_promise;
+  Zookeeper::WatcherCallback watcher =
+      [&connecting_promise, &connected_promise](int type, int state, const char *path) {
+        if (type == ZOO_SESSION_EVENT) {
+          if (state == ZOO_CONNECTING_STATE) {
+            connecting_promise.set_value();
+          }
+          if (state == ZOO_CONNECTED_STATE) {
+            connected_promise.set_value();
+          }
+        }
+      };
+  std::future<void> connecting_future = connecting_promise.get_future();
+  std::future<void> connected_future = connected_promise.get_future();
+
+  zk_->SetWatcher(&watcher);
+  EXPECT_FALSE(is_ready(connecting_future));
+  EXPECT_FALSE(is_ready(connected_future));
+
+  ASSERT_TRUE(StopZookeeper());
+  EXPECT_TRUE(wait_ready(connecting_future));
+  EXPECT_FALSE(is_ready(connected_future));
+
+  ASSERT_TRUE(StartZookeeper());
+  EXPECT_TRUE(wait_ready(connected_future));
 }

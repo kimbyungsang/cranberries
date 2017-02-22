@@ -27,13 +27,18 @@ bool Zookeeper::Init() {
   assert(!zh_);
   zh_.reset(zookeeper_init(
     hosts_.c_str(),
-    NULL, // watcher
+    &Zookeeper::WatcherHandler,
     recv_timeout_,
     NULL, // clientid
     NULL, // watcher context
     0 // flags
   ));
   return static_cast<bool>(zh_);
+}
+
+void Zookeeper::SetWatcher(const WatcherCallback *watcher) {
+  assert(zh_);
+  zoo_set_context(zh_.get(), const_cast<void*>(static_cast<const void*>(watcher)));
 }
 
 int Zookeeper::Create(const char *path, const std::string &value,
@@ -150,6 +155,9 @@ int Zookeeper::State() {
 
 void Zookeeper::WatcherHandler(zhandle_t *zzh, int type, int state,
                  const char *path, void *watcherCtx) {
+  if (!watcherCtx) {
+    return;
+  }
   (*static_cast<WatcherCallback*>(watcherCtx))(type, state, path);
 }
 
