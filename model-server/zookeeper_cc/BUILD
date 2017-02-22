@@ -31,6 +31,7 @@ sh_test(
 sh_library(
   name = "run_zookeeper_server",
   testonly = 1,
+  visibility = ["//visibility:public"],
   srcs = ["run_zookeeper_server.sh"],
   deps = [
     "//sh_utils",

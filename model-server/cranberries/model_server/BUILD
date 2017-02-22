@@ -16,6 +16,7 @@ cc_binary(
   srcs = [
     "model_server.cc",
   ],
+  visibility = ["//visibility:public"],
   deps = [
     "@tf_serving//tensorflow_serving/model_servers:model_platform_types",
     "@tf_serving//tensorflow_serving/model_servers:platform_config_util",
