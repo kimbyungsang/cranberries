@@ -3,6 +3,7 @@ import time
 import os
 import os.path
 import sys
+import kazoo.exceptions
 from kazoo.client import KazooClient
 
 
