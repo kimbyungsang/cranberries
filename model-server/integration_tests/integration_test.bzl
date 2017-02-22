@@ -1,7 +1,8 @@
-def integration_test(name):
+def integration_test(name, args=[]):
   native.sh_test(
-    name = "model_loading_test",
+    name = name,
     srcs = ["run_py_test.sh"],
+    args = args,
     data = [":" + name + "_impl"],
     deps = [":run_all_servers"],
   )
