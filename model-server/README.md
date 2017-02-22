@@ -33,11 +33,12 @@ In particular, you should:
 1. You should install [Docker](https://www.docker.com/) in addition to Bazel to
    run tests, as some of them run real Apache Zookeeper server inside Docker.
 2. You should also install [Kazoo](https://kazoo.readthedocs.io/en/latest/)
-   library for Python2. There is a chance it's already installed: if
-   `import kazoo' statement does not fail, you're probably good to go.
-   If it does, install Kazoo with either:
-   * `sudo -H pip install kazoo`
-   * `sudo apt-get install python-kazoo`
+   and [Pytest](http://pytest.org/) libraries for Python2. That can be done with
+   `pip`:
+
+   ~~~shell
+   sudo apt-get install python-kazoo python-pytest
+   ~~~
 3. Run
 
    ~~~shell

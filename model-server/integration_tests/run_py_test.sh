@@ -2,4 +2,4 @@
 
 set -u -e
 source integration_tests/run_all_servers.sh
-integration_tests/$(basename "$0")_impl
+python -m pytest integration_tests/$(basename "$0")_impl.py

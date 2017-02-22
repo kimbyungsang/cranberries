@@ -5,10 +5,17 @@ sh_test(
   deps = [":run_all_servers"],
 )
 
-py_binary(
+py_library(
   name = "model_loading_test_impl",
   testonly = 1,
   srcs = ["model_loading_test_impl.py"],
+  deps = [":utils"],
+)
+
+py_library(
+  name = "utils",
+  testonly = 1,
+  srcs = ["utils.py"],
 )
 
 sh_library(
