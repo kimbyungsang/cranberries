@@ -53,7 +53,8 @@ namespace cranberries {
 // if a model takes long time to load, all further changes won't be reflected
 // until the loading is finished.
 //
-// TODO(egor.suvorov): handle re/disconnections from Zookeeper.
+// TODO(egor.suvorov): handle re/disconnections from Zookeeper because of
+// session expirations (Zookeeper* becomes invalid?).
 // TODO(egor.suvorov): handle Zookeeper errors gracefully without losing
 // watches (if that's an issue at all).
 // TODO(egor.suvorov): make it asynchronous(?).

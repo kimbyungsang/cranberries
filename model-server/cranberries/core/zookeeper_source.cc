@@ -79,6 +79,8 @@ ZookeeperSource::ZookeeperSource(zookeeper_cc::Zookeeper *zookeeper)
       })
   , zookeeper_(zookeeper)
 {
+  // Watch for session changes.
+  zookeeper_->SetWatcher(&reload_aspired_models_);
 }
 
 void ZookeeperSource::SetAspiredVersionsCallback(
@@ -91,12 +93,16 @@ void ZookeeperSource::SetAspiredVersionsCallback(
 };
 
 void ZookeeperSource::ReloadAspiredModels() {
+  // Do not ignore session events, it's the "root" watch which should actually
+  // handle state changes.
+
   // We want to be notified when the node is created, so we set a watch; we
   // don't mind being notified when the node is removed as well.
   int res = zookeeper_->Exists(kAspiredModelsZnode, &reload_aspired_models_,
                                nullptr);
   if (res == ZNONODE) {
     // Probably the node was just removed, waiting until it's created.
+    LOG(WARNING) << "Node " << zookeeper_->GetBasePath() << kAspiredModelsZnode << " does not exist";
     return;
   }
   if (res != ZOK) {
@@ -104,6 +110,7 @@ void ZookeeperSource::ReloadAspiredModels() {
     return;
   }
 
+  LOG(INFO) << "Reloading information from " << zookeeper_->GetBasePath() << kAspiredModelsZnode;
   std::vector<std::string> models;
   res = zookeeper_->GetChildren(kAspiredModelsZnode, &models,
                                 &reload_aspired_models_);
@@ -141,6 +148,10 @@ void ZookeeperSource::ReloadAspiredModels() {
 }
 
 void ZookeeperSource::ReloadAspiredModelVersions(const char *path) {
+  if (!path[0]) {
+    // Session event, ignoring.
+    return;
+  }
   const char *name = zookeeper_cc::GetLastPathSegment(path);
 
   // Get set of children and set watch for it.
@@ -201,6 +212,10 @@ void ZookeeperSource::ReloadAspiredModelVersions(const char *path) {
 }
 
 void ZookeeperSource::ReloadAspiredModelVersion(const char *path) {
+  if (!path[0]) {
+    // Session event, ignoring.
+    return;
+  }
   std::string model_path = string(path);
   auto version_pos = model_path.find_last_of('/');
   CHECK(version_pos != std::string::npos);
