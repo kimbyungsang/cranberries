@@ -9,19 +9,6 @@ py_library(
 )
 
 sh_library(
-  name = "run_all_servers",
-  srcs = ["run_all_servers.sh"],
-  testonly = 1,
-  data = [
-    "//integration_tests/test_models:test_models",
-  ],
-  deps = [
-    ":run_model_server",
-    "//zookeeper_cc:run_zookeeper_server",
-  ]
-)
-
-sh_library(
   name = "run_model_server",
   srcs = ["run_model_server.sh"],
   testonly = 1,

@@ -3,8 +3,14 @@ def integration_test(name, args=[]):
     name = name,
     srcs = ["run_py_test.sh"],
     args = args,
-    data = [":" + name + "_impl"],
-    deps = [":run_all_servers"],
+    data = [
+      ":" + name + "_impl",
+      "//integration_tests/test_models:test_models",
+    ],
+    deps = [
+      ":run_model_server",
+      "//zookeeper_cc:run_zookeeper_server",
+    ],
   )
 
   native.py_library(
