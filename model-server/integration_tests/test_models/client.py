@@ -5,7 +5,7 @@ import client_lib
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    aprser.add_argument("--server",
+    parser.add_argument("--server",
                         help="PredictionService in 'host:port' format",
                         required=True)
     parser.add_argument("--model", help="Model's name",
