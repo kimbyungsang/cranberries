@@ -78,7 +78,7 @@ class ZookeeperSource : public Source<StoragePath> {
   const WatcherCallback reload_aspired_model_versions_;
   const WatcherCallback reload_aspired_model_version_;
 
-  zookeeper_cc::Zookeeper *zookeeper_ GUARDED_BY(mu_);
+  zookeeper_cc::Zookeeper *zookeeper_;
   AspiredVersionsCallback set_aspired_versions_callback_ GUARDED_BY(mu_);
   std::unordered_set<string> monitored_models_ GUARDED_BY(mu_);
 
