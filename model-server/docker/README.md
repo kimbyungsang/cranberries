@@ -1,4 +1,4 @@
-# Building and running single image
+# Building 
 
 As we don't have any pre-built image available, you should build one yourself.
 This was tested on Ubuntu 16.04.
@@ -36,8 +36,9 @@ This was tested on Ubuntu 16.04.
    remember to replace `172.17.0.2:2181` with your Zookeeper's server address
    and `/cranberries/servers/dockered` with your real Zookeeper base path.
 
-# Docker Compose
+# Running with Docker Compose
 Example `docker-compose.yml` contains:
+
 1. Cluster of three Zookeeper servers.
 2. [Zookeeper Web UI](https://github.com/tobilg/docker-zookeeper-webui) which
    listens on port 8080.
