@@ -24,7 +24,7 @@ In particular, you should:
    sudo apt-get install realpath
    ~~~
 4. Run `bazel build //cranberries/model_server` from `model-server`
-   directory to build and run the server. Building may take a while because
+   directory to build the server. Building may take a while because
    Bazel will download even more dependencies and compile everything from
    sources.
 
@@ -105,6 +105,20 @@ If you want to load a new model into model server, you should:
    if your client does not support that, create the znode with empty data and
    set its data later. Model server will use the first non-empty data it sees.
    Note that you cannot modify path of a version which is already loaded.
+   
+   If you use `zkCli.sh` command-line client (e.g. by running command similar
+   to `./zkCli.sh -server 172.17.0.2:2181`), here is a sequence of commands
+   which will do the thing:
+   
+   ~~~
+   create /cranberries ""
+   create /cranberries/servers ""
+   create /cranberries/servers/yeputons-desktop ""
+   create /cranberries/servers/yeputons-desktop/aspired-models ""
+   create /cranberries/servers/yeputons-desktop/aspired-models/mnist ""
+   create /cranberries/servers/yeputons-desktop/aspired-models/mnist/2 "/tmp/mnist_model/2"
+   
+   ~~~
 3. If you want to load other versions, simply repeat step 2 for them. You
    should see log messages about picking up changes from Zookeeper.
 4. After model is seen by model server, its state is reflected in ephemeral
