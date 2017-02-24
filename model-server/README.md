@@ -49,6 +49,11 @@ In particular, you should:
    subpackages"). First run may take some time to download Zookeeper docker
    image, it should be faster afterwards.
 
+Note that some tests (e.g. integration tests) will want to start a model server
+on its default port (8500). If there is already a model server on that port,
+they will fail with some strange errors. See comment in
+`integration_tests/run_model_server.sh` for details.
+
 # Usage
 
 ## Initial configuration
